@@ -10,14 +10,14 @@ def investment_report(ticker1):
     if len(history) < 2:
         return "Lack Data for the day"
     
-    today_price = history['Close'][-1]
-    yesterday_price = history['Close'][-2]
-    var = today_price - yesterday_price
+    today_price = history['Close'].iloc[-1]
+    yesterday_price = history['Close'].iloc[-2]
+    var = (today_price - yesterday_price)/yesterday_price*100 if yesterday_price != 0 else 0
     return {
         "ticker": ticker1,
-        "today_price": round(today_price,),
-        "yesterday_price": round(yesterday_price,),
-        "var": var
+        "today_price": f"{today_price:.2f}",
+        "yesterday_price": f"{yesterday_price:.2f}",
+        "var": f"{var:.2f}%"
     }
 
 print(investment_report("AAPL"))

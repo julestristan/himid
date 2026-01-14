@@ -9,4 +9,3 @@ uv pip install -r requirements
 ## 2 - How to use
 
 ## 3 - Example
-
