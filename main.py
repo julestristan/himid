@@ -40,5 +40,5 @@ def report():
     return reports
 
 
-print(report())
-#print(investment_report("AAPL"))
+# print(report())
+print(investment_report("AAPL"))
