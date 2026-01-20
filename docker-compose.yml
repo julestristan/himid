@@ -1,16 +1,17 @@
 services:
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    image: n8nio/n8n:latest
+    container_name: n8n
     restart: always
     ports:
       - "5678:5678"
+    environment:
+      - N8N_PYTHON_INTERPRETER=/usr/bin/python3
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
     volumes:
       - n8n_data:/home/node/.n8n
-      - .:/app # Ceci permet à n8n d'accéder à tes scripts Python dans le dossier actuel
-    environment:
-      - N8N_HOST=localhost
-      - NODE_FUNCTION_ALLOW_EXTERNAL=pd,yfinance,duckdb # Pour autoriser l'usage de bibliothèques si besoin
-    user: root # Nécessaire pour installer des paquets python dans le conteneur si besoin
+      - .:/app
+    user: root
 
 volumes:
   n8n_data:
