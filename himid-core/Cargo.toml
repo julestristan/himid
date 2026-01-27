@@ -1,0 +1,13 @@
+[package]
+name = "himid-core"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+# Module's name in Python
+name = "himid_core" 
+# Linking to Python
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module"] }
