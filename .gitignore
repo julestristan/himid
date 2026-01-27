@@ -1,2 +1,6 @@
 .venv/
 .env
+himid-core/target/
+**/*.so
+**/*.dylib
+**/*.whl
