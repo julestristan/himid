@@ -1,3 +1,4 @@
+# Ignored files
 .venv/
 .env
 himid-core/target/
