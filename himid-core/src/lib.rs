@@ -1,14 +1,23 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use pyo3::prelude::*;
+
+#[pyfunction]
+fn compute_performance(buy_price: f64, current_price: f64, quantity: f64) -> PyResult<(f64,f64)>{
+    let initial_value = buy_price * quantity;
+    let current_value = current_price * quantity;
+
+    let profit = current_value - initial_value;
+    let roi = if initial_value != 0.0 {
+        (profit / initial_value) * 100.0
+    }
+    else {
+        0.0
+    };
+
+    Ok((roi,profit))
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[pymodule]
+fn himid_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(compute_performance,m)?)?;
+    Ok(())
 }
