@@ -2,6 +2,7 @@
 .venv/
 .env
 config.py
+__pycache__
 himid-core/target/
 **/*.so
 **/*.dylib
