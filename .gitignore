@@ -1,6 +1,7 @@
 # Ignored files
 .venv/
 .env
+config.py
 himid-core/target/
 **/*.so
 **/*.dylib
