@@ -1,17 +1,17 @@
-import os
+# imported libraries
 import yfinance as yf
-import himid_core  # Ton module Rust compilé
+import himid_core
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime
 import config
 
 # Configuration Portfolio
-# CW8.PA est le ticker pour le MSCI World sur Euronext Paris
+# CW8.PA: ticker MSCI World on Euronext Paris
 PORTEFEUILLE = {
-    "BTC-USD": (30000.0, 0.05),
-    "AAPL": (150.0, 10),
-    "CW8.PA": (430.0, 5)
+    "AI.PA": (158.63, 3),
+    "DCAM.PA": (5.59, 45),
+    "ALO.PA": (26.75, 4)
 }
 
 def generer_rapport():
@@ -20,15 +20,15 @@ def generer_rapport():
 
     for ticker, (prix_achat, qte) in PORTEFEUILLE.items():
         try:
-            # 1. Récupérer le prix en temps réel
+            # 1. Retrieve prices
             t = yf.Ticker(ticker)
             prix_actuel = t.fast_info['last_price']
             
-            # 2. Utiliser le moteur RUST pour le calcul
+            # 2. Use .rs library for computations
             roi, profit = himid_core.compute_performance(prix_achat, prix_actuel, qte)
             total_profit_global += profit
             
-            # 3. Formater la ligne
+            # 3. Suitable format for a mail
             statut = "📈" if profit >= 0 else "📉"
             corps_mail += f"{statut} {ticker}:\n"
             corps_mail += f"   Actuel: {prix_actuel:.2f} | Achat: {prix_achat:.2f}\n"
@@ -48,7 +48,7 @@ def envoyer_mail(contenu):
     msg['From'] = config.EMAIL_SENDER
     msg['To'] = config.EMAIL_RECEIVER
 
-    # Connexion sécurisée au serveur SMTP de Google
+    # STMP connection to google server
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(config.EMAIL_SENDER, config.EMAIL_PASSWORD)
         smtp.send_message(msg)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     print("🚀 Calcul en cours avec le moteur Rust...")
     rapport = generer_rapport()
     
-    print(rapport) # Pour voir le résultat dans ton terminal
+    print(rapport)
     
     print("📧 Envoi du mail...")
     envoyer_mail(rapport)
