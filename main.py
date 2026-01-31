@@ -1,44 +1,64 @@
-# Import all needed libraries for the project
+import os
 import yfinance as yf
-import pandas as pd
-import duckdb as ddb
+import himid_core  # Ton module Rust compilé
+import smtplib
+from email.message import EmailMessage
+from datetime import datetime
+import config
 
-def investment_report(ticker1):
-    ticker = yf.Ticker(ticker1)
-    history = ticker.history(period="2d")
+# Configuration Portfolio
+# CW8.PA est le ticker pour le MSCI World sur Euronext Paris
+PORTEFEUILLE = {
+    "BTC-USD": (30000.0, 0.05),
+    "AAPL": (150.0, 10),
+    "CW8.PA": (430.0, 5)
+}
 
-    if len(history) < 2:
-        return "Lack of data for the day"
+def generer_rapport():
+    corps_mail = f"--- Rapport Himid - {datetime.now().strftime('%d/%m/%Y %H:%M')} ---\n\n"
+    total_profit_global = 0
+
+    for ticker, (prix_achat, qte) in PORTEFEUILLE.items():
+        try:
+            # 1. Récupérer le prix en temps réel
+            t = yf.Ticker(ticker)
+            prix_actuel = t.fast_info['last_price']
+            
+            # 2. Utiliser le moteur RUST pour le calcul
+            roi, profit = himid_core.compute_performance(prix_achat, prix_actuel, qte)
+            total_profit_global += profit
+            
+            # 3. Formater la ligne
+            statut = "📈" if profit >= 0 else "📉"
+            corps_mail += f"{statut} {ticker}:\n"
+            corps_mail += f"   Actuel: {prix_actuel:.2f} | Achat: {prix_achat:.2f}\n"
+            corps_mail += f"   ROI: {roi:.2f}% | Gain: {profit:.2f}$\n\n"
+            
+        except Exception as e:
+            corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
+
+    corps_mail += f"------------------------------\n"
+    corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}$\n"
+    return corps_mail
+
+def envoyer_mail(contenu):
+    msg = EmailMessage()
+    msg.set_content(contenu)
+    msg['Subject'] = f"📊 Himid : Ton point finance du jour"
+    msg['From'] = config.EMAIL_SENDER
+    msg['To'] = config.EMAIL_RECEIVER
+
+    # Connexion sécurisée au serveur SMTP de Google
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(config.EMAIL_SENDER, config.EMAIL_PASSWORD)
+        smtp.send_message(msg)
+
+if __name__ == "__main__":
+    print("🚀 Calcul en cours avec le moteur Rust...")
+    rapport = generer_rapport()
     
-    today_price = history['Close'].iloc[-1]
-    yesterday_price = history['Close'].iloc[-2]
-    var = (today_price - yesterday_price)/yesterday_price*100 if yesterday_price != 0 else 0
-    return {
-        "ticker": ticker1,
-        "today_price": f"{today_price:.2f}",
-        "yesterday_price": f"{yesterday_price:.2f}",
-        "var": f"{var:.2f}%"
-    }
-
-con = ddb.connect('himid.db')
-con.execute("""
-CREATE TABLE IF NOT EXISTS investments(
-            ticker TEXT,
-            buy_date DATE,
-            buy_price DOUBLE)
-""")
-
-def report():
-    owned_assets = con.execute("SELECT * FROM investments").fetchall()
-    reports=[]
-    for ticker, b_date, b_price in owned_assets:
-        data = yf.Ticker(ticker).history(period="2d")
-        current_price = data['Close'].iloc[-1]
-
-        perf_since_buy = (current_price - b_price) / b_price * 100 if b_price != 0 else 0
-        reports.append(f"Performance of {ticker} since buy: {perf_since_buy:.2f}%")
-    return reports
-
-
-# print(report())
-print(investment_report("AAPL"))
+    print(rapport) # Pour voir le résultat dans ton terminal
+    
+    print("📧 Envoi du mail...")
+    envoyer_mail(rapport)
+    print("✅ Terminé !")
