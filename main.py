@@ -31,14 +31,14 @@ def generer_rapport():
             # 3. Suitable format for a mail
             statut = "📈" if profit >= 0 else "📉"
             corps_mail += f"{statut} {ticker}:\n"
-            corps_mail += f"   Actuel: {prix_actuel:.2f} | Achat: {prix_achat:.2f}\n"
-            corps_mail += f"   ROI: {roi:.2f}% | Gain: {profit:.2f}$\n\n"
+            corps_mail += f"   Actuel: {prix_actuel:.2f}€ | Achat: {prix_achat:.2f}€\n"
+            corps_mail += f"   ROI: {roi:.2f}% | Gain: {profit:.2f}€\n\n"
             
         except Exception as e:
             corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
 
     corps_mail += f"------------------------------\n"
-    corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}$\n"
+    corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}€\n"
     return corps_mail
 
 def envoyer_mail(contenu):
