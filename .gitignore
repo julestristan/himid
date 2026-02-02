@@ -7,3 +7,4 @@ himid-core/target/
 **/*.so
 **/*.dylib
 **/*.whl
+himid.db
