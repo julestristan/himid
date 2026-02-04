@@ -4,7 +4,12 @@ import himid_core
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime
-import config
+import os
+
+try:
+    import config
+except ImportError:
+    config = None
 
 # Configuration Portfolio
 # CW8.PA: ticker MSCI World on Euronext Paris
@@ -42,23 +47,28 @@ def generer_rapport():
     return corps_mail
 
 def envoyer_mail(contenu):
+    sender = os.getenv("EMAIL_SENDER") or (config.EMAIL_SENDER if config else None)
+    password = os.getenv("EMAIL_PASSWORD") or (config.EMAIL_PASSWORD if config else None)
+    receiver = os.getenv("EMAIL_RECEIVER") or (config.EMAIL_RECEIVER if config else None)
+
+    if not sender or not password:
+        print("❌ Erreur: Identifiants email manquants (config.py ou Secrets GitHub)")
+        return
+
     msg = EmailMessage()
     msg.set_content(contenu)
     msg['Subject'] = f"📊 Himid : Ton point finance du jour"
-    msg['From'] = config.EMAIL_SENDER
-    msg['To'] = config.EMAIL_RECEIVER
+    msg['From'] = sender
+    msg['To'] = receiver
 
-    # STMP connection to google server
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(config.EMAIL_SENDER, config.EMAIL_PASSWORD)
+        smtp.login(sender, password)
         smtp.send_message(msg)
 
 if __name__ == "__main__":
     print("🚀 Calcul en cours avec le moteur Rust...")
     rapport = generer_rapport()
-    
     print(rapport)
-    
     print("📧 Envoi du mail...")
     envoyer_mail(rapport)
     print("✅ Terminé !")
