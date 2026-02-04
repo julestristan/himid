@@ -26,6 +26,7 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
         run: |
+          uv pip install maturin yfinance
           # 1. Compiler le module Rust (Maturin est géré par uv)
           cd himid-core
           uv run maturin develop --release
