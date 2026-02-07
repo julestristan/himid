@@ -3,7 +3,7 @@ import yfinance as yf
 import himid_core
 import smtplib
 from email.message import EmailMessage
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 try:
@@ -33,7 +33,7 @@ PORTEFEUILLE = {
 }
 
 def generer_rapport():
-    corps_mail = f"--- Rapport Himid - {datetime.now().strftime('%d/%m/%Y %H:%M')} ---\n\n"
+    corps_mail = f"Bonjour, \n\n Voici de le rapport Himid du {(datetime.now() - timedelta(days=1)).strftime('%d/%m/%Y')}\n\n"
     total_profit_global = 0
 
     for ticker, (prix_achat, qte) in PORTEFEUILLE.items():
@@ -65,12 +65,12 @@ def envoyer_mail(contenu):
     receiver = os.getenv("EMAIL_RECEIVER") or (config.EMAIL_RECEIVER if config else None)
 
     if not sender or not password:
-        print("❌ Erreur: Identifiants email manquants (config.py ou Secrets GitHub)")
+        print("❌ Erreur: Identifiants email manquants")
         return
 
     msg = EmailMessage()
     msg.set_content(contenu)
-    msg['Subject'] = f"📊 Himid : Ton point finance du jour"
+    msg['Subject'] = f"Himid - Rapport du {(datetime.now() - timedelta(days=1)).strftime('%d/%m/%Y')}"
     msg['From'] = sender
     msg['To'] = receiver
 
