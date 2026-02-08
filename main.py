@@ -5,11 +5,18 @@ import smtplib
 from email.message import EmailMessage
 from datetime import datetime, timedelta
 import os
+from mistralai import Mistral
 
 try:
     import config
 except ImportError:
     config = None
+
+api_key = os.getenv("MISTRAL_API_KEY") or (config.MISTRAL_API_KEY if config else None)
+if api_key:
+    client = Mistral(api_key=api_key)
+else:
+    client = None
 
 # Configuration Portfolio
 # CW8.PA: ticker MSCI World on Euronext Paris
@@ -32,6 +39,27 @@ PORTEFEUILLE = {
     "ALO.PA": (26.75, 4)
 }
 
+
+def analyser_actus(ticker, roi):
+    if not client: return "Analyse IA indisponible."
+    
+    try:
+        t = yf.Ticker(ticker)
+        news = t.news
+        titres = [n.get('title') or n.get('headline') for n in news[:3]] if news else []
+        
+        prompt = f"L'action {ticker} a varié de {roi:.2f}%. Actus: {titres}. Explique pourquoi en une phrase courte en français."
+
+        # Appel à Mistral (Modèle Small ou NeMo, très efficaces)
+        chat_response = client.chat.complete(
+            model="mistral-small-latest",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return chat_response.choices[0].message.content.strip()
+        
+    except Exception as e:
+        return f"Note : Variation de {roi:.2f}% sur {ticker}."
+
 def generer_rapport():
     corps_mail = f"Bonjour, \n\n Voici de le rapport Himid du {(datetime.now() - timedelta(days=1)).strftime('%d/%m/%Y')}\n\n"
     total_profit_global = 0
@@ -41,10 +69,13 @@ def generer_rapport():
             # 1. Retrieve prices
             t = yf.Ticker(ticker)
             prix_actuel = t.fast_info['last_price']
-            
             # 2. Use .rs library for computations
             roi, profit = himid_core.compute_performance(prix_achat, prix_actuel, qte)
             total_profit_global += profit
+            if abs(roi) > 0.01: # Analyse presque tout pour tester
+                print(f"DEBUG: Analyse en cours pour {ticker}...")
+                analyse = analyser_actus(ticker, roi)
+                corps_mail += f"🧠 Analyse : {analyse}\n"
             
             # 3. Suitable format for a mail
             statut = "📈" if profit >= 0 else "📉"
