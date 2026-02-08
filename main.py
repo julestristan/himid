@@ -12,7 +12,7 @@ try:
 except ImportError:
     config = None
 
-api_key = os.getenv("MISTRAL_API_KEY") or (config.MISTRAL_API_KEY if config else None)
+api_key = os.getenv("MISTRALAI_API_KEY") or (config.MISTRALAI_API_KEY if config else None)
 if api_key:
     client = Mistral(api_key=api_key)
 else:
