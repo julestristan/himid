@@ -96,7 +96,8 @@ def generer_rapport():
             # 3. Formatage du mail
             statut = "📈" if profit >= 0 else "📉"
             corps_mail += f"{statut} {ticker} :\n"
-            corps_mail += f"   Performance Globale : {roi_global:.2f}% ({profit:.2f}€)\n"
+            corps_mail += f"  Variation du jour : {var_jour:.2f}%\n"
+            corps_mail += f"  Performance Globale (ROI & Profit): {roi_global:.2f}% ({profit:.2f}€)\n"
             if analyse:
                 corps_mail += f"   🧠 Pourquoi ça bouge aujourd'hui ({var_jour:.2f}%) :\n\n {analyse}\n"
             corps_mail += "\n"
