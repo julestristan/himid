@@ -26,11 +26,12 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
           MISTRALAI_API_KEY: ${{ secrets.MISTRALAI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           uv venv
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "PATH=$PWD/.venv/bin:$PATH" >> $GITHUB_ENV
-          uv pip install maturin yfinance mistralai
+          uv pip install maturin yfinance mistralai openai
 
           # 1. Compiler le module Rust (Maturin est géré par uv)
           cd himid-core

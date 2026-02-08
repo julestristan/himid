@@ -5,21 +5,27 @@ import smtplib
 from email.message import EmailMessage
 from datetime import datetime, timedelta
 import os
-from mistralai import Mistral
+#from mistralai import Mistral
+from openai import OpenAI
 
 try:
     import config
 except ImportError:
     config = None
 
+api_key = os.getenv("OPENAI_API_KEY") or (config.OPENAI_API_KEY if config else None)
+client = OpenAI(api_key=api_key) if api_key else None
+
+''' For MISTRALAI
 api_key = os.getenv("MISTRALAI_API_KEY") or (config.MISTRALAI_API_KEY if config else None)
 if api_key:
     client = Mistral(api_key=api_key)
 else:
     client = None
+'''
+
 
 # Configuration Portfolio
-# CW8.PA: ticker MSCI World on Euronext Paris
 PORTEFEUILLE = {
     "AI.PA": (158.63, 3),
     "DCAM.PA": (5.59, 45),
@@ -40,25 +46,31 @@ PORTEFEUILLE = {
 }
 
 
-def analyser_actus(ticker, roi):
+def analyser_actus(ticker, var_jour):
     if not client: return "Analyse IA indisponible."
     
     try:
         t = yf.Ticker(ticker)
         news = t.news
-        titres = [n.get('title') or n.get('headline') for n in news[:3]] if news else []
+        titres = [n.get('title') or n.get('headline') for n in news[:5]] if news else []
         
-        prompt = f"L'action {ticker} a varié de {roi:.2f}%. Actus: {titres}. Explique pourquoi en une phrase courte en français."
-
+        prompt = f"Explique très brièvement pourquoi l'action {ticker} a varié de {var_jour:.2f}% lors de la dernière séance boursière."
+        '''
         # Appel à Mistral (Modèle Small ou NeMo, très efficaces)
         chat_response = client.chat.complete(
             model="mistral-small-latest",
             messages=[{"role": "user", "content": prompt}]
         )
         return chat_response.choices[0].message.content.strip()
-        
+        '''
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=100
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Note : Variation de {roi:.2f}% sur {ticker}."
+        return f"Note : Variation de {var_jour:.2f}% sur {ticker}."
 
 def generer_rapport():
     corps_mail = f"Bonjour, \n\n Voici de le rapport Himid du {(datetime.now() - timedelta(days=1)).strftime('%d/%m/%Y')}\n\n"
@@ -66,22 +78,28 @@ def generer_rapport():
 
     for ticker, (prix_achat, qte) in PORTEFEUILLE.items():
         try:
-            # 1. Retrieve prices
             t = yf.Ticker(ticker)
+            # 1. Performance Globale (Ton moteur Rust)
             prix_actuel = t.fast_info['last_price']
-            # 2. Use .rs library for computations
-            roi, profit = himid_core.compute_performance(prix_achat, prix_actuel, qte)
-            total_profit_global += profit
-            if abs(roi) > 0.01: # Analyse presque tout pour tester
-                print(f"DEBUG: Analyse en cours pour {ticker}...")
-                analyse = analyser_actus(ticker, roi)
-                corps_mail += f"🧠 Analyse : {analyse}\n"
+            roi_global, profit = himid_core.compute_performance(prix_achat, prix_actuel, qte)
             
-            # 3. Suitable format for a mail
+            # 2. Performance du jour (Pour l'IA)
+            # On récupère le % de variation sur la séance
+            var_jour = t.info.get('regularMarketChangePercent', 0)
+            
+            # On n'appelle l'IA que si l'action a bougé AUJOURD'HUI (> 1.5%)
+            # car c'est ça que l'actualité explique.
+            analyse = ""
+            if abs(var_jour) > 1.5:
+                analyse = analyser_actus(ticker, var_jour) # On passe la variation du jour à l'IA
+
+            # 3. Formatage du mail
             statut = "📈" if profit >= 0 else "📉"
-            corps_mail += f"{statut} {ticker}:\n"
-            corps_mail += f"   Actuel: {prix_actuel:.2f}€ | Achat: {prix_achat:.2f}€\n"
-            corps_mail += f"   ROI: {roi:.2f}% | Gain: {profit:.2f}€\n\n"
+            corps_mail += f"{statut} {ticker} :\n"
+            corps_mail += f"   Performance Globale : {roi_global:.2f}% ({profit:.2f}€)\n"
+            if analyse:
+                corps_mail += f"   🧠 Pourquoi ça bouge aujourd'hui ({var_jour:.2f}%) :\n\n {analyse}\n"
+            corps_mail += "\n"
             
         except Exception as e:
             corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
