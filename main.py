@@ -53,8 +53,13 @@ def analyser_actus(ticker, var_jour):
         t = yf.Ticker(ticker)
         news = t.news
         titres = [n.get('title') or n.get('headline') for n in news[:5]] if news else []
-        
-        prompt = f"Explique très brièvement pourquoi l'action {ticker} a varié de {var_jour:.2f}% lors de la dernière séance boursière."
+        prompt = f"""
+        Tu es un expert financier. Analyse la variation de {var_jour:.2f}% de l'action {ticker}.
+        Voici les titres d'actualité récents : {titres}.
+
+        INSTRUCTION : En te basant PRIORITAIREMENT sur ces titres (ou sur le contexte du secteur si les titres sont vides), explique la raison de ce mouvement en une seule phrase courte et percutante. 
+        Ne dis PAS que tu n'as pas d'infos en temps réel, utilise les données fournies ci-dessus.
+        """        
         '''
         # Appel à Mistral (Modèle Small ou NeMo, très efficaces)
         chat_response = client.chat.complete(
@@ -86,7 +91,7 @@ def generer_rapport():
             # 2. Performance du jour (Pour l'IA)
             # On récupère le % de variation sur la séance
             var_jour = t.info.get('regularMarketChangePercent', 0)
-            
+            total_profit_global += profit
             # On n'appelle l'IA que si l'action a bougé AUJOURD'HUI (> 1.5%)
             # car c'est ça que l'actualité explique.
             analyse = ""
@@ -99,7 +104,7 @@ def generer_rapport():
             corps_mail += f"  Variation du jour : {var_jour:.2f}%\n"
             corps_mail += f"  Performance Globale (ROI & Profit): {roi_global:.2f}% ({profit:.2f}€)\n"
             if analyse:
-                corps_mail += f"   🧠 Pourquoi ça bouge aujourd'hui ({var_jour:.2f}%) :\n\n {analyse}\n"
+                corps_mail += f"   🧠 Pourquoi ça bouge aujourd'hui ({var_jour:.2f}%) :\n {analyse}\n"
             corps_mail += "\n"
             
         except Exception as e:
