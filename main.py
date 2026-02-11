@@ -27,13 +27,13 @@ else:
 
 # Configuration Portfolio
 PORTEFEUILLE = {
+    "AI.PA": (165.95, 10),
     "ASML.AS": (1189.12, 1),
     "DCAM.PA": (5.53, 145),
     "ASM.AS": (717.17, 1),
     "PSP5.PA": (51.43,11),
-    "MC.PA": (540.32,1),
     "SU.PA": (249.49, 2),
-    "AI.PA": (158.63, 3),
+    "MC.PA": (540.32,1),
     "RI.PA": (80.44, 5),
     "ACA.PA": (18.30, 21),
     "STMPA.PA": (26.09,10),
@@ -42,8 +42,10 @@ PORTEFEUILLE = {
     "SAN.PA": (81.10, 3),
     "TTE.PA": (63.08, 3),
     "BNP.PA": (92.52, 2),
+    "DSY.PA": (18.13, 10),
     "EDEN.PA": (17.83, 10),
     "BESI.AS": (165.27, 1),
+    "ABCA.PA": (5.54, 30),
     "CA.PA": (14.94, 10),
     "ALO.PA": (26.75, 4),
     "UBI.PA": (4.21, 25)
