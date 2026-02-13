@@ -5,7 +5,7 @@ import smtplib
 from email.message import EmailMessage
 from datetime import datetime, timedelta
 import os
-from cor_matrix import *
+from cor_matrix import load_cor_matrix
 #from mistralai import Mistral
 from openai import OpenAI
 
@@ -119,14 +119,14 @@ def generer_rapport():
             corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
     try:
         tickers_list = list(PORTEFEUILLE.keys())
-        matrix = load_cor_matrix(tickers_list)
+        matrix_cor = load_cor_matrix(tickers_list)
 
         corps_mail += "\n" + "="*40 + "\n"
-        corps_mail += matrice_txt
+        corps_mail += matrix_cor
         corps_mail += "\n" + "="*40 + "\n"
     except:
         corps_mail += f"\n⚠️ Matrix failed to build : {e}\n"
-        
+
     corps_mail += f"------------------------------\n"
     corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}€\n"
     return corps_mail
