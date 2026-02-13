@@ -5,9 +5,11 @@ import smtplib
 from email.message import EmailMessage
 from datetime import datetime, timedelta
 import os
+from cor_matrix import *
 #from mistralai import Mistral
 from openai import OpenAI
 
+# import config if run locally
 try:
     import config
 except ImportError:
@@ -64,7 +66,8 @@ def analyser_actus(ticker, var_jour):
 
         INSTRUCTION : En te basant PRIORITAIREMENT sur ces titres (ou sur le contexte du secteur si les titres sont vides), explique la raison de ce mouvement en une seule phrase courte et percutante. 
         Ne dis PAS que tu n'as pas d'infos en temps réel, utilise les données fournies ci-dessus.
-        """        
+        """
+
         '''
         # Appel à Mistral (Modèle Small ou NeMo, très efficaces)
         chat_response = client.chat.complete(
@@ -111,10 +114,19 @@ def generer_rapport():
             if analyse:
                 corps_mail += f"   🧠 Pourquoi ça bouge aujourd'hui ({var_jour:.2f}%) :\n {analyse}\n"
             corps_mail += "\n"
-            
+  
         except Exception as e:
             corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
+    try:
+        tickers_list = list(PORTEFEUILLE.keys())
+        matrix = load_cor_matrix(tickers_list)
 
+        corps_mail += "\n" + "="*40 + "\n"
+        corps_mail += matrice_txt
+        corps_mail += "\n" + "="*40 + "\n"
+    except:
+        corps_mail += f"\n⚠️ Matrix failed to build : {e}\n"
+        
     corps_mail += f"------------------------------\n"
     corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}€\n"
     return corps_mail
