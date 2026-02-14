@@ -17,9 +17,9 @@ def load_heatmap(tickers, file_path="correlation_heatmap.png"):
         # Get rid of the stock exchange location 
         corr_matrix.columns = [col.split('.')[0] for col in corr_matrix.columns]
         corr_matrix.index = [idx.split('.')[0] for idx in corr_matrix.index]
-
+        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
         plt.figure(figsize=(12, 10)) # According to portfolio size
-        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+        sns.heatmap(corr_matrix, mask=mask,annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
         plt.title('CorMatrix for past 30 days')
         plt.tight_layout() # Adjust layout
         plt.savefig(file_path)
