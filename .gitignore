@@ -8,3 +8,4 @@ himid-core/target/
 **/*.dylib
 **/*.whl
 himid.db
+*.png
