@@ -1,11 +1,14 @@
 # imported libraries
 import yfinance as yf
+import matplotlib.pyplot as plt
+import seaborn
 import himid_core
 import smtplib
 from email.message import EmailMessage
+import mimetypes
 from datetime import datetime, timedelta
 import os
-from cor_matrix import load_cor_matrix
+from cor_matrix import *
 #from mistralai import Mistral
 from openai import OpenAI
 
@@ -117,21 +120,20 @@ def generer_rapport():
   
         except Exception as e:
             corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
+    image_path = "correlation_heatmap.png"
     try:
         tickers_list = list(PORTEFEUILLE.keys())
-        matrix_cor = load_cor_matrix(tickers_list)
-
-        corps_mail += "\n" + "="*40 + "\n"
-        corps_mail += matrix_cor
-        corps_mail += "\n" + "="*40 + "\n"
-    except:
-        corps_mail += f"\n⚠️ Matrix failed to build : {e}\n"
+        # Load CorMatrix
+        image_path = load_heatmap(tickers_list) 
+    except Exception as e:
+        print(f"⚠️ CorMatrix failed to build : {e}")
+        image_path = None
 
     corps_mail += f"------------------------------\n"
     corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}€\n"
-    return corps_mail
+    return corps_mail, image_path
 
-def envoyer_mail(contenu):
+def envoyer_mail(contenu, image_path=None):
     sender = os.getenv("EMAIL_SENDER") or (config.EMAIL_SENDER if config else None)
     password = os.getenv("EMAIL_PASSWORD") or (config.EMAIL_PASSWORD if config else None)
     receiver = os.getenv("EMAIL_RECEIVER") or (config.EMAIL_RECEIVER if config else None)
@@ -146,14 +148,30 @@ def envoyer_mail(contenu):
     msg['From'] = sender
     msg['To'] = receiver
 
+    if image_path and os.path.exists(image_path):
+        with open(image_path, 'rb') as f:
+            file_data = f.read()
+            # Mimetypes to make sure mail format is supported for every mail app
+            ctype, encoding = mimetypes.guess_type(image_path)
+            if ctype is None or encoding is not None:
+                ctype = 'application/octet-stream'
+            maintype, subtype = ctype.split('/', 1)
+            
+            msg.add_attachment(
+                file_data,
+                maintype=maintype,
+                subtype=subtype,
+                filename=os.path.basename(image_path)
+            )
+
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(sender, password)
         smtp.send_message(msg)
 
 if __name__ == "__main__":
     print("🚀 Calcul en cours avec le moteur Rust...")
-    rapport = generer_rapport()
+    rapport, path_image = generer_rapport()
     print(rapport)
     print("📧 Envoi du mail...")
-    envoyer_mail(rapport)
+    envoyer_mail(rapport,path_image)
     print("✅ Terminé !")

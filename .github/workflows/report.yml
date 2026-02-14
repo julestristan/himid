@@ -31,7 +31,7 @@ jobs:
           uv venv
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "PATH=$PWD/.venv/bin:$PATH" >> $GITHUB_ENV
-          uv pip install maturin yfinance pandas mistralai openai
+          uv pip install maturin yfinance pandas numpy matplotlib seaborn mistralai openai
 
           # 1. Compiler le module Rust (Maturin est géré par uv)
           cd himid-core
