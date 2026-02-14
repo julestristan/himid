@@ -18,6 +18,8 @@ def load_heatmap(tickers, file_path="correlation_heatmap.png"):
         corr_matrix.columns = [col.split('.')[0] for col in corr_matrix.columns]
         corr_matrix.index = [idx.split('.')[0] for idx in corr_matrix.index]
         mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+        # Option if diagonals needs to be part of the CorMatrix:
+        # mask = np.triu(np.ones_like(corr_matrix, dtype=bool),k=1)
         plt.figure(figsize=(12, 10)) # According to portfolio size
         sns.heatmap(corr_matrix, mask=mask,annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
         plt.title('CorMatrix for past 30 days')
