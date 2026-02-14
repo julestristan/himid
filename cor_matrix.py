@@ -1,47 +1,31 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
 
-def load_cor_matrix(tickers):
-    """
-    DL data and generate half matrix
-    """
+def load_heatmap(tickers, file_path="correlation_heatmap.png"):
     try:
-        # DL one month of data
         data = yf.download(tickers, period="1mo", interval="1d", progress=False)['Close']
-        
         if data.empty:
-            return "⚠️ Data missing"
+            raise ValueError("Data missing")
 
-        # Compute variations of data
         returns = data.pct_change()
         corr_matrix = returns.corr()
-        
-        # 3. Construction de la chaîne de caractères (Demi-matrice)
-        tickers_list = corr_matrix.columns
-        output = "📊 CorMatrix for past 30 days\n"
-        output += "--------------------------------------\n"
-        
-        # Header (not entire ticker)
-        header = " " * 10
-        for t in tickers_list:
-            clean_name = t.split('.')[0][:5] # 'Pick the header not the stock exchange location'
-            header += f"{clean_name:>8}"
-        output += header + "\n"
 
-        # Lines
-        for i, row_ticker in enumerate(tickers_list):
-            row_name = row_ticker.split('.')[0][:8]
-            line = f"{row_name:<10}"
-            for j, col_ticker in enumerate(tickers_list):
-                if j <= i:  # Only half triangle
-                    val = corr_matrix.iloc[i, j]
-                    line += f"{val:>8.2f}"
-                else:
-                    line += " " * 8
-            output += line + "\n"
-            
-        return output
+        # Get rid of the stock exchange location 
+        corr_matrix.columns = [col.split('.')[0] for col in corr_matrix.columns]
+        corr_matrix.index = [idx.split('.')[0] for idx in corr_matrix.index]
+
+        plt.figure(figsize=(12, 10)) # According to portfolio size
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+        plt.title('CorMatrix for past 30 days')
+        plt.tight_layout() # Adjust layout
+        plt.savefig(file_path)
+        plt.close()
+        return file_path
 
     except Exception as e:
-        return f"⚠️ Error while computing : {str(e)}"
+        print(f"⚠️ Can't load CorMatrix: {str(e)}")
+        return None
