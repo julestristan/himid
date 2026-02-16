@@ -1,6 +1,7 @@
 # How Is My Investment Doing (himid) project by julestristan
 
 [ticker list from yfinance website](https://finance.yahoo.com/lookup/)
+
 ## 1 - How to install
 
 ```bash
@@ -13,7 +14,8 @@ uv pip install -r requirements
 
 Notes:
 
-- Implement a table be informed about upcoming annual results
+- Implement a table to be informed about upcoming annual results
 - Volumetry as a 3rd dimension for CorMatrix
 - Check what to do to improve LLM answer for daily variations (currently not insightful)
+- add streamlit interface
 - Other Cron option ?
