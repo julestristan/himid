@@ -7,7 +7,7 @@ import os
 
 def load_heatmap(tickers, period, file_path):
     try:
-        data = yf.download(tickers, period, interval="1d", progress=False)['Close']
+        data = yf.download(tickers=tickers, period=period, interval="1d", progress=False)['Close']
         if data.empty:
             raise ValueError("Data missing")
 
@@ -22,9 +22,11 @@ def load_heatmap(tickers, period, file_path):
         # mask = np.triu(np.ones_like(corr_matrix, dtype=bool),k=1)
         plt.figure(figsize=(12, 10)) # According to portfolio size
         sns.heatmap(corr_matrix, mask=mask,annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
-        plt.title('CorMatrix for past 30 days')
-        plt.tight_layout() # Adjust layout
-        plt.savefig(f"CorMatrix{period}")
+        plt.title(f"CorMatrix for past {period}")
+        # Make sure we have a png file
+        if not file_path.endswith(".png"):
+            file_path += ".png"
+        plt.savefig(file_path)
         plt.close()
         return file_path
 
