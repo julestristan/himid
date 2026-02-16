@@ -5,9 +5,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 
-def load_heatmap(tickers, file_path="correlation_heatmap.png"):
+def load_heatmap(tickers, period, file_path):
     try:
-        data = yf.download(tickers, period="1mo", interval="1d", progress=False)['Close']
+        data = yf.download(tickers, period, interval="1d", progress=False)['Close']
         if data.empty:
             raise ValueError("Data missing")
 
@@ -24,7 +24,7 @@ def load_heatmap(tickers, file_path="correlation_heatmap.png"):
         sns.heatmap(corr_matrix, mask=mask,annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
         plt.title('CorMatrix for past 30 days')
         plt.tight_layout() # Adjust layout
-        plt.savefig(file_path)
+        plt.savefig(f"CorMatrix{period}")
         plt.close()
         return file_path
 
