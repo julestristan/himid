@@ -63,7 +63,7 @@ def analyser_actus(ticker, var_jour):
     try:
         t = yf.Ticker(ticker)
         news = t.news
-        titres = [n.get('title') or n.get('headline') for n in news[:5]] if news else []
+        titres = [n.get('title') or n.get('headline') for n in news[:2]] if news else []
         prompt = f"""
         Tu es un expert financier. Analyse la variation de {var_jour:.2f}% de l'action {ticker}.
         Voici les titres d'actualité récents : {titres}.
