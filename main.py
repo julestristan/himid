@@ -63,7 +63,7 @@ def analyser_actus(ticker, var_jour):
     try:
         t = yf.Ticker(ticker)
         news = t.news
-        titres = [n.get('title') or n.get('headline') for n in news[:2]] if news else []
+        titres = [n.get('title') or n.get('headline') for n in news[:4]] if news else []
         prompt = f"""
         Tu es un expert financier. Analyse la variation de {var_jour:.2f}% de l'action {ticker}.
         Voici les titres d'actualité récents : {titres}.
@@ -131,7 +131,7 @@ def generer_rapport():
         try:
             tickers_list = list(PORTEFEUILLE.keys())
             # Load CorMatrix
-            path = load_heatmap(tickers_list, period, f"CorMatrix_{period}")
+            path = load_heatmap(tickers_list, period, f"CorMatrix_{period}")[0]
             if path:
                 image_paths.append(path)
         except Exception as e:
