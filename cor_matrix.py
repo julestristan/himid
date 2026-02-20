@@ -28,7 +28,7 @@ def load_heatmap(tickers, period, file_path):
             file_path += ".png"
         plt.savefig(file_path)
         plt.close()
-        return file_path
+        return file_path,corr_matrix
 
     except Exception as e:
         print(f"⚠️ Can't load CorMatrix: {str(e)}")
