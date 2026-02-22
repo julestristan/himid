@@ -21,16 +21,13 @@ WORKDIR /app
 COPY . .
 
 # 6. Création de l'environnement et installation des paquets
-# On installe manuellement les paquets comme dans ton workflow GitHub
 RUN uv venv && \
     uv pip install maturin yfinance pandas numpy matplotlib seaborn openai streamlit
 
 # 7. Compilation du module Rust
-# Maturin va chercher le dossier avec le Cargo.toml (himid-core)
 RUN cd himid-core && uv run maturin develop --release
 
-# 8. Exposition du port Streamlit
 EXPOSE 8501
 
-# 9. Lancement de l'app
-CMD ["uv", "run", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# 9. Lancement de l'app & mail
+CMD uv run python main.py && uv run streamlit run app.py --server.port=8501 --server.address=0.0.0.0
