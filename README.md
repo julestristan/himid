@@ -8,6 +8,22 @@
 uv pip install -r requirements
 ```
 
+### Using docker
+
+```bash
+docker build -t himid .
+```
+
+Make sure you have a .env file in the root folder of the repo with:
+
+- EMAIL_SENDER
+- EMAIL_PASSWORD
+- MISTRALAI_API_KEY or OPENAI_API_KEY
+
+```bash
+docker run -p 8501:8501 --env-file .env himid
+```
+
 ## 2 - How to use
 
 ## 3 - Example
