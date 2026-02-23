@@ -16,6 +16,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
+RUN mkdir -p assets
 
 # 5. Copie du code
 COPY . .
