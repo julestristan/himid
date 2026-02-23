@@ -39,4 +39,5 @@ jobs:
           
           # 2. Revenir à la racine et lancer le script Python
           cd ..
+          mkdir -p assets
           uv run python main.py
