@@ -73,6 +73,7 @@ def analyser_actus(ticker, var_jour):
         Ne dis PAS que tu n'as pas d'infos en temps réel, utilise les données fournies ci-dessus.
         Ne sois pas trop vague en disant que c'est des tendances de marché, soit factuel par rapport à
         un aspect clé qui a déclencher la variation du prix de l'action et qui cause la variation.
+        Si tu as vraiment aucune idée, ne fais pas de commentaire pour ce titre
         """
 
         '''
