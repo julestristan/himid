@@ -87,7 +87,7 @@ def analyser_actus(ticker, var_jour):
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=100
+            max_tokens=50
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
