@@ -111,7 +111,7 @@ def generer_rapport():
             # On n'appelle l'IA que si l'action a bougé AUJOURD'HUI (> 1.5%)
             # car c'est ça que l'actualité explique.
             analyse = ""
-            if abs(var_jour) > 5:
+            if abs(var_jour) > 3.5:
                 analyse = analyser_actus(ticker, var_jour) # On passe la variation du jour à l'IA
 
             # 3. Formatage du mail
