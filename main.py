@@ -64,7 +64,7 @@ def analyser_actus(ticker, var_jour):
     try:
         t = yf.Ticker(ticker)
         news = t.news
-        titres = [n.get('title') or n.get('headline') for n in news[:4]] if news else []
+        titres = [n.get('title') or n.get('headline') for n in news[:5]] if news else []
         prompt = f"""
         Tu es un expert financier. Analyse la variation de {var_jour:.2f}% de l'action {ticker}.
         Voici les titres d'actualité récents : {titres}.
@@ -87,7 +87,7 @@ def analyser_actus(ticker, var_jour):
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=50
+            max_tokens=150
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
