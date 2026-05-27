@@ -141,7 +141,7 @@ def generer_rapport():
     pct_profit_global = total_profit_global / sum(prix * quantite for prix, quantite in PORTEFEUILLE.values())
     corps_mail += f"------------------------------\n"
     corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}€\n"
-    corps_mail += f"💰 POURCENTAGE PROFIT TOTAL : {pct_profit_global:.2f}€\n"
+    corps_mail += f"💰 PROFIT POURCENTAGE : {pct_profit_global:.2f}€\n"
     return corps_mail, image_paths
 
 def envoyer_mail(contenu, image_paths=None):
