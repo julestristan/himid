@@ -138,7 +138,7 @@ def generer_rapport():
                 image_paths.append(path)
         except Exception as e:
             print(f"⚠️ CorMatrix failed to build : {e}")
-    pct_profit_global = total_profit_global / sum(prix * quantite for prix, quantite in PORTEFEUILLE.values())
+    pct_profit_global = 100 * total_profit_global / sum(prix * quantite for prix, quantite in PORTEFEUILLE.values())
     corps_mail += f"------------------------------\n"
     corps_mail += f"💰 PROFIT TOTAL : {total_profit_global:.2f}€\n"
     corps_mail += f"💰 PROFIT POURCENTAGE : {pct_profit_global:.2f}€\n"
