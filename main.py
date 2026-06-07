@@ -72,8 +72,7 @@ def analyser_actus(ticker, var_jour):
         INSTRUCTION : En te basant PRIORITAIREMENT sur ces titres (ou sur le contexte du secteur si les titres sont vides), explique la raison de ce mouvement en une seule phrase courte et percutante.
         Ne sois pas trop vague en disant que c'est des tendances de marché, soit factuel par rapport à
         un aspect clé qui a déclencher la variation du prix de l'action et qui cause la variation.
-        Appuies toi au maximum sur les news récentes
-        Si tu as vraiment aucune idée, ne fais pas de commentaire pour ce titre
+        Appuies toi au maximum sur les news récentes.
         """
 
         '''
