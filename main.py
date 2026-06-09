@@ -33,7 +33,7 @@ else:
 # Configuration Portfolio
 PERIOD_CORMATRIX = ["1mo","12mo"]
 PORTEFEUILLE = {
-    "AI.PA": (165.95, 10),
+    "AI.PA": (150.87, 11),
     "ASML.AS": (1189.12, 1),
     "DCAM.PA": (5.49, 277),
     "ASM.AS": (717.17, 1),
