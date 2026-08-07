@@ -1,5 +1,7 @@
-import streamlit as st
 import os
+
+import streamlit as st
+
 from cor_matrix import load_heatmap
 from main import PORTEFEUILLE, client
 
@@ -44,13 +46,15 @@ if analyze_button:
                 try:
                     response = client.chat.completions.create(
                         model="gpt-4o-mini",
-                        messages=[{"role": "user", "content": prompt}]
+                        messages=[{"role": "user", "content": prompt}],
                     )
-                    
+
                     # --- AJOUT DU HIDE/SHOW ICI ---
                     # L'argument expanded=True permet de l'ouvrir automatiquement à la génération
                     with st.expander("📄 Toggle ON/OFF details", expanded=True):
-                        st.chat_message("assistant").write(response.choices[0].message.content)
-                        
+                        st.chat_message("assistant").write(
+                            response.choices[0].message.content
+                        )
+
                 except Exception as e:
                     st.error(f"Erreur : {e}")
