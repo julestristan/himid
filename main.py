@@ -1,3 +1,4 @@
+# Memo: refactor to do
 # imported libraries
 import mimetypes
 import os
