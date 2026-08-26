@@ -1,0 +1,44 @@
+name: CI Checks
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python environment & Install dependencies
+        run: |
+          uv venv
+          echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
+          echo "PATH=$PWD/.venv/bin:$PATH" >> $GITHUB_ENV
+          uv pip install ruff
+
+      - name: Run Linters
+        run: |
+          # 1. Lint Python avec Ruff
+          echo "Running Python linter (Ruff)..."
+          uv run ruff check .
+          
+          # 2. Lint Rust avec Clippy
+          echo "Running Rust linter (Clippy)..."
+          cd himid-core
+          cargo clippy -- -D warnings
+          cd ..
