@@ -27,17 +27,32 @@ jobs:
           EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
           MISTRALAI_API_KEY: ${{ secrets.MISTRALAI_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          uv venv
-          echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
-          echo "PATH=$PWD/.venv/bin:$PATH" >> $GITHUB_ENV
-          uv pip install maturin yfinance pandas numpy matplotlib seaborn mistralai openai
 
-          # 1. Compiler le module Rust (Maturin est géré par uv)
+      - name: Run Linters
+        run: |
+          # 1. Lint Python Ruff
+          echo "Running Python linter (Ruff)..."
+          uv run ruff check .
+          
+          # 2. Lint Rust Clippy (himid-core folder)
+          echo "Running Rust linter (Clippy)..."
+          cd himid-core
+          cargo clippy -- -D warnings
+          cd ..
+
+      - name: Build Rust Module & Run Python
+        env:
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+          MISTRALAI_API_KEY: ${{ secrets.MISTRALAI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          # 1. Compile Rust module (Maturin with uv)
           cd himid-core
           uv run maturin develop --release
           
-          # 2. Revenir à la racine et lancer le script Python
+          # 2. Go to folder root and start script
           cd ..
           mkdir -p assets
           uv run python main.py
