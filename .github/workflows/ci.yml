@@ -37,8 +37,8 @@ jobs:
           echo "Running Python linter (Ruff)..."
           uv run ruff check .
           
-          # 2. Lint Rust avec Clippy
+          # 2. Lint Rust avec Clippy en lui pointant directement le python de la racine
           echo "Running Rust linter (Clippy)..."
           cd himid-core
-          cargo clippy -- -D warnings
+          PYO3_PYTHON="$GITHUB_WORKSPACE/.venv/bin/python" cargo clippy -- -D warnings
           cd ..
