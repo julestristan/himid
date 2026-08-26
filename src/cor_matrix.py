@@ -5,7 +5,7 @@ import yfinance as yf
 
 
 def load_heatmap(tickers, period, file_path):
-    file_path = f"./assets/{file_path}"
+    file_path = f"../assets/{file_path}"
     try:
         data = yf.download(
             tickers=tickers, period=period, interval="1d", progress=False
