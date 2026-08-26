@@ -39,6 +39,6 @@ def load_heatmap(tickers, period, file_path):
         plt.close()
         return file_path, corr_matrix
 
-    except Exception as e:
+    except Exception as e: # noqa: BLE001
         print(f"⚠️ Can't load CorMatrix: {e!s}")
         return None

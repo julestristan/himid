@@ -32,29 +32,27 @@ if path and os.path.exists(path):
     st.image(path, use_container_width=True)
 
 # AI Assistant to analyze diversification
-if analyze_button:
-    if df_corr is not None:
-        with chat_container:
-            with st.spinner("Analyzing..."):
-                prompt = f"""
-                Analyze this correlation matrix :
-                {df_corr.round(2).to_string()}
-                
-                Within maximum 30 structured lines, give the strong and weak points
-                of current diversification of the portfolio
-                """
-                try:
-                    response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=[{"role": "user", "content": prompt}],
-                    )
+if analyze_button and df_corr is not None:
+    with chat_container, st.spinner("Analyzing..."):
+        prompt = f"""
+        Analyze this correlation matrix :
+        {df_corr.round(2).to_string()}
+        
+        Within maximum 30 structured lines, give the strong and weak points
+        of current diversification of the portfolio
+        """
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+            )
 
-                    # --- AJOUT DU HIDE/SHOW ICI ---
-                    # L'argument expanded=True permet de l'ouvrir automatiquement à la génération
-                    with st.expander("📄 Toggle ON/OFF details", expanded=True):
-                        st.chat_message("assistant").write(
-                            response.choices[0].message.content
-                        )
+            # --- AJOUT DU HIDE/SHOW ICI ---
+            # L'argument expanded=True permet de l'ouvrir automatiquement à la génération
+            with st.expander("📄 Toggle ON/OFF details", expanded=True):
+                st.chat_message("assistant").write(
+                    response.choices[0].message.content
+                )
 
-                except Exception as e:
-                    st.error(f"Erreur : {e}")
+        except Exception as e: # noqa: BLE001
+            st.error(f"Erreur : {e}")

@@ -92,12 +92,12 @@ def analyser_actus(ticker, var_jour):
             max_tokens=150,
         )
         return response.choices[0].message.content.strip()
-    except Exception:
+    except Exception: # noqa: BLE001
         return f"Note : Variation de {var_jour:.2f}% sur {ticker}."
 
 
 def generer_rapport():
-    corps_mail = f"Bonjour, \n\n Voici de le rapport Himid du {(datetime.now() - timedelta(days=1)).strftime('%d/%m/%Y')}\n\n"
+    corps_mail = f"Bonjour, \n\n Voici de le rapport Himid du {(datetime.now().astimezone() - timedelta(days=1)).strftime('%d/%m/%Y')}\n\n"
     total_profit_global = 0
 
     for ticker, (prix_achat, qte) in PORTEFEUILLE.items():
@@ -133,7 +133,7 @@ def generer_rapport():
                 corps_mail += f"🧠 Pourquoi ça bouge aujourd'hui ({var_jour:.2f}%) :\n {analyse}\n"
             corps_mail += "\n"
 
-        except Exception as e:
+        except Exception as e: # noqa: BLE001
             corps_mail += f"⚠️ Erreur sur {ticker}: {e}\n\n"
     image_paths = []
     for period in PERIOD_CORMATRIX:
@@ -143,7 +143,7 @@ def generer_rapport():
             path = load_heatmap(tickers_list, period, f"CorMatrix_{period}")[0]
             if path:
                 image_paths.append(path)
-        except Exception as e:
+        except Exception as e: # noqa: BLE001
             print(f"⚠️ CorMatrix failed to build : {e}")
     pct_profit_global = (
         100
@@ -172,7 +172,7 @@ def envoyer_mail(contenu, image_paths=None):
     msg = EmailMessage()
     msg.set_content(contenu)
     msg["Subject"] = (
-        f"Himid - Rapport du {(datetime.now() - timedelta(days=1)).strftime('%d/%m/%Y')}"
+        f"Himid - Rapport du {(datetime.now().astimezone() - timedelta(days=1)).strftime('%d/%m/%Y')}"
     )
     msg["From"] = sender
     msg["To"] = receiver
