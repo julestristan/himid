@@ -31,4 +31,4 @@ RUN cd himid-core && uv run maturin develop --release
 EXPOSE 8501
 
 # 9. Lancement de l'app & mail
-CMD uv run python main.py && uv run streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+CMD uv run python src/main.py && uv run streamlit run src/app.py --server.port=8501 --server.address=0.0.0.0

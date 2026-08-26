@@ -2,8 +2,8 @@ import os
 
 import streamlit as st
 
-from cor_matrix import load_heatmap
-from main import PORTEFEUILLE, client
+from src.cor_matrix import load_heatmap
+from src.main import PORTEFEUILLE, client
 
 st.set_page_config(page_title="Himid Dashboard", layout="wide")
 

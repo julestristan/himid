@@ -55,4 +55,4 @@ jobs:
           # 2. Go to folder root and start script
           cd ..
           mkdir -p assets
-          uv run python main.py
+          uv run python src/main.py
