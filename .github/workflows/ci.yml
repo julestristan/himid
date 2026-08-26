@@ -29,7 +29,7 @@ jobs:
           uv venv
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "PATH=$PWD/.venv/bin:$PATH" >> $GITHUB_ENV
-          uv pip install ruff
+          uv pip install maturin ruff
 
       - name: Run Linters
         run: |
