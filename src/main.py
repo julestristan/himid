@@ -12,7 +12,7 @@ import yfinance as yf
 # from mistralai import Mistral
 from openai import OpenAI
 
-from src.cor_matrix import *
+from cor_matrix import *
 
 # import config if run locally
 try:
