@@ -23,7 +23,7 @@ COPY . .
 
 # 6. Création de l'environnement et installation des paquets
 RUN uv venv && \
-    uv pip install maturin yfinance pandas numpy matplotlib seaborn openai streamlit
+    uv pip install -r requirements.txt
 
 # 7. Compilation du module Rust
 RUN cd himid-core && uv run maturin develop --release
