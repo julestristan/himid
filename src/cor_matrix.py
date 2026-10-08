@@ -1,11 +1,17 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import yfinance as yf
 
+# Repo root /assets, whatever the current working directory is
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+
 
 def load_heatmap(tickers, period, file_path):
-    file_path = f"../assets/{file_path}"
+    ASSETS_DIR.mkdir(exist_ok=True)
+    file_path = str(ASSETS_DIR / file_path)
     try:
         data = yf.download(
             tickers=tickers, period=period, interval="1d", progress=False
@@ -41,4 +47,4 @@ def load_heatmap(tickers, period, file_path):
 
     except Exception as e: # noqa: BLE001
         print(f"⚠️ Can't load CorMatrix: {e!s}")
-        return None
+        return None, None
