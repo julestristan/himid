@@ -5,7 +5,8 @@
 ## 1 - How to install
 
 ```bash
-uv pip install -r requirements
+uv pip install -r requirements.txt
+cd himid-core && maturin develop --release
 ```
 
 ### Using docker
