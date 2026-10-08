@@ -173,7 +173,7 @@ def envoyer_mail(contenu, image_paths=None):
     msg = EmailMessage()
     msg.set_content(contenu)
     msg["Subject"] = (
-        f"Himid - Rapport du {(datetime.now().astimezone() - timedelta(days=1)).strftime('%d/%m/%Y')}"
+        f"Himid - Rapport du {(datetime.now().astimezone()).strftime('%d/%m/%Y')}"
     )
     msg["From"] = sender
     msg["To"] = receiver
