@@ -141,7 +141,7 @@ def generer_rapport():
         try:
             tickers_list = list(PORTEFEUILLE.keys())
             # Load CorMatrix
-            path = load_heatmap(tickers_list, period, f"CorMatrix_{period}")[0]
+            path, _ = load_heatmap(tickers_list, period, f"CorMatrix_{period}")
             if path:
                 image_paths.append(path)
         except Exception as e: # noqa: BLE001
