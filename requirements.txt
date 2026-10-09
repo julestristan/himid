@@ -1,10 +1,12 @@
-# Direct dependencies only (himid_core is built separately with maturin, see README)
-maturin==1.11.5
+# Direct dependencies only
+fastapi==0.143.0
 matplotlib==3.10.8
 mistralai==1.12.0
 numpy==2.4.1
 openai==2.17.0
 pandas==2.3.3
+psycopg[binary]==3.3.6
 seaborn==0.13.2
 streamlit==1.54.0
+uvicorn==0.54.0
 yfinance==1.0

@@ -6,7 +6,6 @@ import smtplib
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 
-import himid_core
 import yfinance as yf
 
 # from mistralai import Mistral
@@ -60,6 +59,13 @@ PORTEFEUILLE = {
     "ALRIB.PA" : (9.55, 15),
 }
 
+# On the mini PC the positions come from the transactions table
+if os.getenv("DATABASE_URL"):
+    from portfolio import connect, load_positions
+
+    with connect() as conn:
+        PORTEFEUILLE = load_positions(conn)
+
 
 def analyser_actus(ticker, var_jour):
     if not client:
@@ -104,11 +110,10 @@ def generer_rapport():
     for ticker, (prix_achat, qte) in PORTEFEUILLE.items():
         try:
             t = yf.Ticker(ticker)
-            # 1. Performance Globale (Ton moteur Rust)
+            # 1. Performance Globale
             prix_actuel = t.fast_info["last_price"]
-            roi_global, profit = himid_core.compute_performance(
-                prix_achat, prix_actuel, qte
-            )
+            profit = (prix_actuel - prix_achat) * qte
+            roi_global = 100 * (prix_actuel / prix_achat - 1) if prix_achat else 0.0
 
             # 2. Performance du jour (Pour l'IA)
             # On récupère le % de variation sur la séance
@@ -200,7 +205,7 @@ def envoyer_mail(contenu, image_paths=None):
 
 
 if __name__ == "__main__":
-    print("🚀 Calcul en cours avec le moteur Rust...")
+    print("🚀 Calcul en cours...")
     rapport, paths_image = generer_rapport()
     print(rapport)
     print("📧 Envoi du mail...")
