@@ -8,7 +8,7 @@ from email.message import EmailMessage
 
 import yfinance as yf
 
-# from mistralai import Mistral
+# from mistralai.client import Mistral  # mistralai >= 2: Mistral moved to mistralai.client
 from openai import OpenAI
 
 from cor_matrix import *
