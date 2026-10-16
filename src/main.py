@@ -36,7 +36,7 @@ PERIOD_CORMATRIX = ["1mo", "12mo"]
 PORTEFEUILLE = {
     "AI.PA": (150.87, 11),
     "ASML.AS": (1189.12, 1),
-    "DCAM.PA": (5.79, 455),
+    "DCAM.PA": (5.81, 475),
     "ASM.AS": (717.17, 1),
     "PSP5.PA": (54.46, 19),
     "SU.PA": (254.35, 5),
