@@ -3,9 +3,5 @@
 .env
 config.py
 __pycache__
-himid-core/target/
-**/*.so
-**/*.dylib
-**/*.whl
 himid.db
 *.png
