@@ -39,8 +39,9 @@ PERIOD_CORMATRIX = ["1mo", "12mo"]
 if os.getenv("DATABASE_URL"):
     from portfolio import connect, load_positions
 
+    # Empty transactions table: keep the hardcoded positions
     with connect() as conn:
-        PORTEFEUILLE = load_positions(conn)
+        PORTEFEUILLE = load_positions(conn) or PORTEFEUILLE
 
 
 def analyser_actus(ticker, var_jour):
