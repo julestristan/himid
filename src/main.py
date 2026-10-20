@@ -12,6 +12,7 @@ import yfinance as yf
 from openai import OpenAI
 
 from cor_matrix import *
+from portfolio import PORTEFEUILLE  # hardcoded fallback, replaced below if DATABASE_URL
 
 # import config if run locally
 try:
@@ -33,31 +34,6 @@ else:
 
 # Configuration Portfolio
 PERIOD_CORMATRIX = ["1mo", "12mo"]
-PORTEFEUILLE = {
-    "AI.PA": (150.87, 11),
-    "ASML.AS": (1189.12, 1),
-    "DCAM.PA": (5.81, 475),
-    "ASM.AS": (717.17, 1),
-    "PSP5.PA": (54.46, 19),
-    "SU.PA": (254.35, 5),
-    "MC.PA": (540.32, 1),
-    "RI.PA": (80.44, 5),
-    "ACA.PA": (18.30, 21),
-    "STMPA.PA": (26.09, 10),
-    "EL.PA": (247.60, 2),
-    "ITP.PA": (25.33, 10),
-    "FDJU.PA": (25.61, 10),
-    "SAN.PA": (81.10, 3),
-    "TTE.PA": (63.08, 3),
-    "DSY.PA": (18.13, 10),
-    "EDEN.PA": (17.83, 10),
-    "BESI.AS": (165.27, 1),
-    "OVH.PA": (15.28, 12),
-    "CA.PA": (14.94, 10),
-    "ALO.PA": (21.11, 10),
-    "UBI.PA": (4.10, 51),
-    "ALRIB.PA" : (9.55, 15),
-}
 
 # On the mini PC the positions come from the transactions table
 if os.getenv("DATABASE_URL"):
