@@ -21,12 +21,12 @@ services:
     build: .
     restart: unless-stopped
     # Dashboard only: the daily report is run by cron, see README
-    command: uv run streamlit run src/app.py --server.port=8501 --server.address=0.0.0.0
+    command: uv run streamlit run src/app.py
     env_file: .env
     environment:
       DATABASE_URL: postgresql://himid:${POSTGRES_PASSWORD:-himid}@db:5432/himid
     ports:
-      - "8501:8501"
+      - "127.0.0.1:8501:8501"  # local access only (streamlit dashboard)
     volumes:
       - ./assets:/app/assets
     depends_on:
